@@ -1,663 +1,452 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Success Animal Healthcare Limited</title>
-<meta name="description" content="Empowering Livestock Health Worldwide - Manufacturer & Exporter of High-Quality Animal Healthcare Products" />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&amp;display=swap" rel="stylesheet" />
-<style>
-  /* Reset and base styles */
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    color: #3a3a3a;
-    background-color: #fefbf7;
-    line-height: 1.6;
-  }
-  a {
-    color: #2e7d32;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-  a:hover,
-  a:focus {
-    color: #1b4d23;
-  }
-  img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-  }
-  h1, h2, h3, h4 {
-    margin-top: 0;
-    font-weight: 600;
-    color: #2e7d32;
-  }
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, PartyPopper, Music2, Pause, Play, Gift, Sparkles, Share2, Clock, Camera, Star, Calendar, Download, Cake } from "lucide-react";
+import Confetti from "react-confetti";
 
-  /* Container */
-  .container {
-    width: 90%;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-  }
+/**
+ * 🎉 Birthday Wish – Advanced UX/UI One-Pager
+ * Technologies: React + Tailwind + Framer Motion + Lucide Icons + CSS effects
+ * Features:
+ *  - Animated gradient hero with floating balloons/hearts
+ *  - Name reveal + typewriter line + live confetti
+ *  - Magic buttons with microinteractions & soft glassmorphism
+ *  - Memory gallery (auto-play carousel) with 3D hover tilt
+ *  - Timeline of moments with subtle parallax
+ *  - Countdown to the next birthday (auto-calculated)
+ *  - Love letter card with handwriting font
+ *  - Music toggle (no autoplay with sound, user gesture required)
+ *  - Share/download image of hero section
+ *  - Fully responsive & print-friendly
+ *
+ * ▶ How to customize (search & replace):
+ *   - celebrantName: Person you love
+ *   - fromName: Your name
+ *   - birthdayMonth/day: Month & day of their birthday
+ *   - galleryImages: Replace URLs with your images
+ *   - loveLetter: Write your message
+ */
 
-  /* Sticky Navbar */
-  header {
-    position: sticky;
-    top: 0;
-    background-color: #f7f3eb;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  }
-  nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
-  }
-  nav .logo {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #4e342e;
-    letter-spacing: 1.2px;
-  }
-  nav ul {
-    list-style: none;
-    display: flex;
-    gap: 1.6rem;
-    padding-left: 0;
-    margin: 0;
-  }
-  nav ul li a {
-    font-weight: 500;
-    font-size: 1rem;
-    padding: 0.35rem 0.5rem;
-  }
-  nav ul li a.active, nav ul li a:hover, nav ul li a:focus {
-    color: #1b4d23;
-    border-bottom: 2px solid #1b4d23;
-  }
+// ====== ✨ Customize here ✨ ======
+const celebrantName = "My Forever Love"; // e.g., "Ariana"
+const fromName = "— Yours, Arpa";        // your sign-off
+const birthdayMonth = 10; // 1-12
+const birthdayDay = 14;   // 1-31
 
-  /* Hero */
-  .hero {
-    position: relative;
-    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1470&amp;q=80') center center/cover no-repeat;
-    min-height: 70vh;
-    display: flex;
-    align-items: center;
-    color: #faf9f5;
-    text-shadow: 0 0 10px rgba(0,0,0,0.7);
-    padding: 2rem 1rem;
-  }
-  .hero .hero-content {
-    max-width: 600px;
-    background-color: rgba(46,125,50,0.75);
-    padding: 2rem 2.5rem;
-    border-radius: 6px;
-    box-shadow: 0 8px 14px rgb(46 125 50 / 0.6);
-    margin: auto;
-  }
-  .hero h1 {
-    font-size: 2.8rem;
-    margin-bottom: 0.5rem;
-  }
-  .hero p {
-    font-weight: 300;
-    font-size: 1.15rem;
-    margin-bottom: 1.5rem;
-  }
-  .hero .btn-group {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .btn {
-    background-color: #a67c52;
-    color: #faf9f5;
-    border: none;
-    padding: 0.75rem 1.6rem;
-    font-weight: 600;
-    font-size: 1.1rem;
-    border-radius: 3px;
-    cursor: pointer;
-    box-shadow: 0 3px 6px rgb(166 124 82 / 0.5);
-    transition: background-color 0.3s ease;
-    text-align: center;
-  }
-  .btn:hover, .btn:focus {
-    background-color: #4e342e;
-    outline: none;
-  }
+const loveLetter = `
+Happy Birthday, my sunshine! 🌞
 
-  /* Quick category highlight */
-  .quick-categories {
-    margin-top: 3rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1.6rem;
-  }
-  .category-card {
-    background-color: #faf9f5;
-    border: 1.5px solid #d7cbb8;
-    border-radius: 12px;
-    padding: 1.6rem 1rem;
-    text-align: center;
-    box-shadow: 0 2px 5px rgb(166 124 82 / 0.15);
-    transition: box-shadow 0.3s ease;
-  }
-  .category-card:hover, .category-card:focus-within {
-    box-shadow: 0 6px 16px rgb(46 125 50 / 0.4);
-  }
-  .category-icon {
-    font-size: 2.8rem;
-    color: #4e342e;
-    margin-bottom: 1rem;
-  }
-  .category-label {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #2e7d32;
-  }
+Every day with you feels like a small festival—soft laughter, warm hugs,
+and tiny sparks of magic. You make colors brighter and moments deeper.
 
-  /* Section Titles */
-  section h2.section-title {
-    font-size: 2.2rem;
-    border-bottom: 3px solid #a67c52;
-    display: inline-block;
-    margin-bottom: 1.6rem;
-  }
+On your special day, I’m wishing you a year full of peace, growth,
+and silly, endless smiles. Thank you for choosing me in a world
+full of choices. I love you—today, tomorrow, always.
+`;
 
-  /* About Us */
-  #about-us p {
-    margin-bottom: 1rem;
-    max-width: 900px;
-  }
-  #about-us .milestones {
-    margin-top: 1.5rem;
-    padding-left: 20px;
-    color: #4e342e;
-  }
-  #about-us .milestones li {
-    margin-bottom: 0.7rem;
-    font-weight: 500;
-  }
+const galleryImages = [
+  { src: "https://images.unsplash.com/photo-1511735111819-9a3f7709049c?q=80&w=1400&auto=format&fit=crop", caption: "Your smile, my sunrise" },
+  { src: "https://images.unsplash.com/photo-1529336953121-a4177b377eda?q=80&w=1400&auto=format&fit=crop", caption: "Tiny adventures" },
+  { src: "https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6?q=80&w=1400&auto=format&fit=crop", caption: "Coffee & confessions" },
+  { src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1400&auto=format&fit=crop", caption: "Starry talks" },
+];
+// ====== /Customize ======
 
-  /* Products */
-  #products .categories {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
-    gap: 1.8rem;
-    margin-bottom: 2rem;
-  }
-  .product-category {
-    border: 1.5px solid #a67c52;
-    border-radius: 14px;
-    padding: 1.6rem 1.4rem 2rem;
-    background: #faf9f5;
-    box-shadow: 0 3px 10px rgb(166 124 82 / 0.15);
-    transition: box-shadow 0.3s ease;
-  }
-  .product-category:hover {
-    box-shadow: 0 9px 22px rgb(46 125 50 / 0.35);
-  }
-  .product-category h3 {
-    margin-bottom: 1.2rem;
-    color: #4e342e;
-  }
-  .product-item {
-    margin-bottom: 1.3rem;
-  }
-  .product-item h4 {
-    margin: 0 0 0.3rem;
-    font-weight: 700;
-    color: #2e7d32;
-  }
-  .product-item p {
-    margin: 0 0 0.2rem;
-    font-size: 0.92rem;
-    color: #555;
-  }
-  .product-item .key-benefits {
-    font-style: italic;
-    color: #4e342e;
-  }
-  .product-item .package-info {
-    font-size: 0.85rem;
-    color: #6b4c35;
-  }
+function useCountdown(month, day) {
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
 
-  /* Why Choose Us */
-  #why-us ul {
-    list-style-type: disc;
-    color: #4e342e;
-    max-width: 750px;
-    padding-left: 20px;
-  }
-  #why-us ul li {
-    margin-bottom: 1rem;
-  }
+  const target = useMemo(() => {
+    const year = now.getMonth() + 1 > month || (now.getMonth() + 1 === month && now.getDate() > day)
+      ? now.getFullYear() + 1
+      : now.getFullYear();
+    return new Date(year, month - 1, day, 0, 0, 0);
+  }, [now, month, day]);
 
-  /* Export section */
-  #export ul {
-    list-style-type: square;
-    max-width: 700px;
-    padding-left: 20px;
-    color: #4e342e;
-  }
-  #export ul li {
-    margin-bottom: 0.9rem;
-  }
+  const diff = target - now;
+  const s = Math.max(0, Math.floor(diff / 1000));
+  const days = Math.floor(s / 86400);
+  const hours = Math.floor((s % 86400) / 3600);
+  const minutes = Math.floor((s % 3600) / 60);
+  const seconds = s % 60;
+  return { target, days, hours, minutes, seconds };
+}
 
-  /* Blog / Insights section (optional) */
-  #blog {
-    max-width: 800px;
-    margin: 0 auto 3rem auto;
-  }
-  #blog article {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgb(166 124 82 / 0.2);
-    padding: 1.4rem 1.8rem;
-    margin-bottom: 2rem;
-    transition: box-shadow 0.3s ease;
-  }
-  #blog article:hover {
-    box-shadow: 0 10px 26px rgb(46 125 50 / 0.38);
-  }
-  #blog article h3 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-    color: #4e342e;
-  }
-  #blog article p {
-    margin: 0;
-    color: #555;
-  }
+const floaties = Array.from({ length: 18 }).map((_, i) => ({
+  id: i,
+  x: Math.random() * 100,
+  size: 16 + Math.random() * 28,
+  delay: Math.random() * 8,
+  duration: 10 + Math.random() * 12,
+  type: Math.random() > 0.5 ? "heart" : "balloon",
+}));
 
-  /* Contact Section */
-  #contact .contact-info {
-    max-width: 500px;
-    background-color: #faf9f5;
-    padding: 1.8rem 2rem;
-    border-radius: 10px;
-    box-shadow: 0 3px 12px rgb(166 124 82 / 0.2);
-    margin-bottom: 2rem;
-  }
-  #contact .contact-info h3 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    color: #4e342e;
-  }
-  #contact .contact-info p {
-    margin: 0.4rem 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
+function Floaties() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {floaties.map((f) => (
+        <motion.div
+          key={f.id}
+          initial={{ y: "100%", x: `${f.x}%`, opacity: 0 }}
+          animate={{ y: "-20%", opacity: 0.9 }}
+          transition={{ duration: f.duration, repeat: Infinity, delay: f.delay, ease: "easeInOut" }}
+          className="absolute"
+        >
+          <div
+            className={
+              "flex items-center justify-center rounded-full/" +
+              (f.type === "heart" ? "" : "")
+            }
+          >
+            {f.type === "heart" ? (
+              <Heart className="w-6 h-6 opacity-80" />
+            ) : (
+              <Balloon />
+            )}
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
 
-  /* Google Map embed */
-  #map {
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 3px 14px rgb(46 125 50 / 0.3);
-    height: 320px;
-  }
+function Balloon() {
+  return (
+    <div className="relative">
+      <div className="w-5 h-6 rounded-full bg-pink-400/70 blur-[0.2px]" />
+      <div className="w-px h-5 bg-pink-300/60 mx-auto -mt-1" />
+    </div>
+  );
+}
 
-  /* Footer */
-  footer {
-    background-color: #4e342e;
-    color: #faf9f5;
-    text-align: center;
-    padding: 1rem 0;
-    font-weight: 400;
-    font-size: 0.9rem;
-  }
+function useTypewriter(text, speed = 40) {
+  const [out, setOut] = useState("");
+  useEffect(() => {
+    let i = 0;
+    const t = setInterval(() => {
+      setOut(text.slice(0, i + 1));
+      i++;
+      if (i >= text.length) clearInterval(t);
+    }, speed);
+    return () => clearInterval(t);
+  }, [text, speed]);
+  return out;
+}
 
-  /* Floating WhatsApp Button */
-  #whatsapp-button {
-    position: fixed;
-    bottom: 22px;
-    right: 22px;
-    background-color: #25d366;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: box-shadow 0.3s ease;
-    z-index: 1500;
-  }
-  #whatsapp-button:hover {
-    box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);
-  }
-  #whatsapp-button svg {
-    fill: white;
-    width: 36px;
-    height: 36px;
-  }
+function useWindowSize() {
+  const [size, setSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+  useEffect(() => {
+    const onResize = () => setSize({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  return size;
+}
 
-  /* Responsive */
-  @media (max-width:768px) {
-    .hero {
-      min-height: auto;
-      padding: 3rem 1.5rem 4rem;
-      text-align: center;
-      justify-content: center;
-    }
-    .hero .hero-content {
-      margin: 0 auto;
-      padding: 1.8rem 1.8rem 2.2rem;
-      max-width: 90%;
-    }
-    nav ul {
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .quick-categories {
-      grid-template-columns: repeat(auto-fit,minmax(130px,1fr));
-    }
-    .hero h1 {
-      font-size: 2.2rem;
-    }
-    .hero p {
-      font-size: 1rem;
-    }
-  }
-  @media (max-width:425px) {
-    .btn-group {
-      flex-direction: column;
-    }
-    .btn {
-      width: 100%;
-      text-align: center;
-    }
-  }
-</style>
-</head>
-<body>
+function GlassCard({ children, className = "" }) {
+  return (
+    <div className={`rounded-2xl p-6 backdrop-blur-xl bg-white/10 shadow-xl ring-1 ring-white/20 ${className}`}>
+      {children}
+    </div>
+  );
+}
 
-<header>
-  <nav class="container" aria-label="Primary Navigation">
-    <div class="logo" tabindex="0">Success Animal Healthcare Ltd.</div>
-    <ul role="menubar">
-      <li><a href="#home" class="active" role="menuitem" tabindex="0">Home</a></li>
-      <li><a href="#about-us" role="menuitem" tabindex="0">About Us</a></li>
-      <li><a href="#products" role="menuitem" tabindex="0">Our Products</a></li>
-      <li><a href="#why-us" role="menuitem" tabindex="0">Why Choose Us</a></li>
-      <li><a href="#export" role="menuitem" tabindex="0">Export & Global Reach</a></li>
-      <li><a href="#blog" role="menuitem" tabindex="0">Insights</a></li>
-      <li><a href="#contact" role="menuitem" tabindex="0">Contact Us</a></li>
-    </ul>
-  </nav>
-</header>
+function useAudio(url) {
+  const audioRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => {
+    if (!audioRef.current) audioRef.current = new Audio(url);
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+      }
+    };
+  }, [url]);
+  const toggle = () => {
+    if (!audioRef.current) return;
+    if (playing) audioRef.current.pause();
+    else audioRef.current.play();
+    setPlaying(!playing);
+  };
+  return { toggle, playing };
+}
 
-<main>
+function useShareAsImage(ref) {
+  const [busy, setBusy] = useState(false);
+  const doShare = async () => {
+    if (!ref.current) return;
+    setBusy(true);
+    const html2canvas = (await import("html2canvas")).default;
+    const canvas = await html2canvas(ref.current, { backgroundColor: null, scale: 2 });
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], "happy-birthday.png", { type: "image/png" });
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: "Happy Birthday" });
+      } else {
+        const url = URL.createObjectURL(file);
+        const a = document.createElement("a");
+        a.href = url; a.download = "happy-birthday.png"; a.click();
+        URL.revokeObjectURL(url);
+      }
+      setBusy(false);
+    });
+  };
+  return { doShare, busy };
+}
 
-  <!-- Home Section -->
-  <section id="home" class="hero" role="region" aria-label="Homepage Hero Section">
-    <div class="hero-content">
-      <h1 tabindex="0">Empowering Livestock Health Worldwide</h1>
-      <p tabindex="0">
-        Success Animal Healthcare Limited is a trusted manufacturer and global exporter of top-quality animal healthcare products based in Bangladesh. Enhancing livestock health for a better tomorrow.
-      </p>
-      <div class="btn-group">
-        <a href="#products" class="btn" role="button" tabindex="0">View Products</a>
-        <a href="#contact" class="btn" role="button" tabindex="0">Become a Distributor</a>
+export default function BirthdayWishSite() {
+  const { width, height } = useWindowSize();
+  const [confetti, setConfetti] = useState(false);
+  const { days, hours, minutes, seconds, target } = useCountdown(birthdayMonth, birthdayDay);
+  const subtitle = useTypewriter("You are my favorite reason to smile.");
+  const heroRef = useRef(null);
+  const { doShare, busy } = useShareAsImage(heroRef);
+  const { toggle, playing } = useAudio("https://cdn.pixabay.com/audio/2022/03/15/audio_72b1c9c1c9.mp3");
+
+  useEffect(() => {
+    const t = setTimeout(() => setConfetti(true), 600);
+    const tt = setTimeout(() => setConfetti(false), 6000);
+    return () => { clearTimeout(t); clearTimeout(tt); };
+  }, []);
+
+  return (
+    <div className="min-h-screen text-white selection:bg-pink-300/60 selection:text-black">
+      {/* Animated background */}
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,rgba(255,150,197,0.35),transparent_50%),radial-gradient(ellipse_at_bottom_right,rgba(120,180,255,0.35),transparent_50%)]" />
+      <div className="fixed inset-0 -z-10 animate-[gradientMove_15s_ease_infinite] bg-gradient-to-br from-fuchsia-500/20 via-pink-400/10 to-indigo-500/20" style={{ backgroundSize: "200% 200%" }} />
+
+      {confetti && <Confetti width={width} height={height} numberOfPieces={260} recycle={false} />}
+
+      {/* HERO */}
+      <section ref={heroRef} className="relative flex min-h-[92vh] items-center justify-center px-6">
+        <Floaties />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9 }}
+          className="max-w-5xl w-full"
+        >
+          <GlassCard className="p-8 md:p-12 text-center">
+            <motion.h1
+              initial={{ scale: 0.96 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 120, damping: 12 }}
+              className="text-4xl md:text-6xl font-black tracking-tight drop-shadow-sm"
+            >
+              Happy Birthday, <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-white to-pink-200">{celebrantName}</span>!
+            </motion.h1>
+
+            <p className="mt-4 text-lg md:text-xl text-white/90 font-medium min-h-[1.5em]">{subtitle}</p>
+
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <button onClick={() => setConfetti(true)} className="group inline-flex items-center gap-2 rounded-2xl px-5 py-3 bg-white/15 hover:bg-white/25 ring-1 ring-white/20 transition">
+                <PartyPopper className="w-5 h-5 group-hover:rotate-12 transition" />
+                Celebrate
+              </button>
+              <button onClick={toggle} className="group inline-flex items-center gap-2 rounded-2xl px-5 py-3 bg-white/15 hover:bg-white/25 ring-1 ring-white/20 transition">
+                <Music2 className="w-5 h-5" /> {playing ? "Pause" : "Play"} music
+              </button>
+              <button disabled={busy} onClick={doShare} className="group inline-flex items-center gap-2 rounded-2xl px-5 py-3 bg-white/15 hover:bg-white/25 ring-1 ring-white/20 transition disabled:opacity-60">
+                <Share2 className="w-5 h-5" /> {busy ? "Preparing..." : "Share/Download"}
+              </button>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-white/80"
+            >
+              <Stat icon={<Gift className="w-4 h-4" />} label="Wishes Sent" value="∞" />
+              <Stat icon={<Sparkles className="w-4 h-4" />} label="Magic Level" value="Over 9000" />
+              <Stat icon={<Heart className="w-4 h-4" />} label="Love Meter" value="100%" />
+              <Stat icon={<Star className="w-4 h-4" />} label="Smiles Today" value="A lot" />
+            </motion.div>
+          </GlassCard>
+        </motion.div>
+      </section>
+
+      {/* COUNTDOWN */}
+      <section className="px-6 pb-10 -mt-8">
+        <div className="max-w-5xl mx-auto">
+          <GlassCard className="p-6 md:p-8">
+            <div className="flex items-center gap-3 mb-3">
+              <Clock className="w-5 h-5" />
+              <h2 className="text-xl md:text-2xl font-bold">Countdown to your next birthday</h2>
+            </div>
+            <div className="grid grid-cols-4 gap-3 md:gap-6 text-center">
+              <TimeBox label="Days" value={days} />
+              <TimeBox label="Hours" value={hours} />
+              <TimeBox label="Minutes" value={minutes} />
+              <TimeBox label="Seconds" value={seconds} />
+            </div>
+            <p className="mt-3 text-sm text-white/80">Target: {target.toLocaleDateString()}</p>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* GALLERY */}
+      <section className="px-6 pb-10">
+        <div className="max-w-5xl mx-auto">
+          <GlassCard>
+            <div className="flex items-center gap-3 mb-4">
+              <Camera className="w-5 h-5" />
+              <h2 className="text-xl md:text-2xl font-bold">Little gallery of us</h2>
+            </div>
+            <Carousel images={galleryImages} />
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* TIMELINE */}
+      <section className="px-6 pb-10">
+        <div className="max-w-5xl mx-auto">
+          <GlassCard>
+            <div className="flex items-center gap-3 mb-4">
+              <Calendar className="w-5 h-5" />
+              <h2 className="text-xl md:text-2xl font-bold">Moments that made us</h2>
+            </div>
+            <Timeline />
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* LETTER */}
+      <section className="px-6 pb-20">
+        <div className="max-w-5xl mx-auto">
+          <GlassCard className="relative overflow-hidden">
+            <div className="absolute -top-10 -right-10 opacity-30 rotate-12">
+              <Cake className="w-40 h-40" />
+            </div>
+            <h2 className="text-xl md:text-2xl font-bold mb-3 flex items-center gap-2"><Heart className="w-5 h-5" /> A little letter</h2>
+            <p className="whitespace-pre-wrap font-[\'Handlee\',cursive] text-lg leading-8">
+              {loveLetter}
+            </p>
+            <p className="mt-4 text-right italic opacity-90">{fromName}</p>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="px-6 pb-16">
+        <div className="max-w-5xl mx-auto text-center text-sm text-white/80">
+          Made with <Heart className="inline w-4 h-4" /> for {celebrantName}. © {new Date().getFullYear()}
+        </div>
+      </footer>
+
+      <style>{`
+        @keyframes gradientMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        @import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+      `}</style>
+    </div>
+  );
+}
+
+function Stat({ icon, label, value }) {
+  return (
+    <div className="rounded-xl p-4 bg-white/10 ring-1 ring-white/10">
+      <div className="flex items-center gap-2 text-white/90">{icon}<span className="font-medium">{label}</span></div>
+      <div className="text-2xl font-black mt-1">{value}</div>
+    </div>
+  );
+}
+
+function TimeBox({ label, value }) {
+  return (
+    <motion.div initial={{ y: 6, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true }} className="rounded-xl p-4 bg-white/10 ring-1 ring-white/10">
+      <div className="text-3xl md:text-4xl font-extrabold tabular-nums">{String(value).padStart(2, '0')}</div>
+      <div className="mt-1 text-xs uppercase tracking-wider text-white/80">{label}</div>
+    </motion.div>
+  );
+}
+
+function Carousel({ images }) {
+  const [i, setI] = useState(0);
+  const next = () => setI((p) => (p + 1) % images.length);
+  const prev = () => setI((p) => (p - 1 + images.length) % images.length);
+
+  useEffect(() => {
+    const t = setInterval(next, 3500);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div className="relative">
+      <div className="overflow-hidden rounded-2xl">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.02 }}
+            transition={{ duration: 0.5 }}
+            className="relative"
+          >
+            <img src={images[i].src} alt={images[i].caption} className="w-full aspect-[16/9] object-cover" />
+            <div className="absolute bottom-3 left-3 right-3 px-3 py-2 bg-black/30 backdrop-blur rounded-lg text-sm">{images[i].caption}</div>
+          </motion.div>
+        </AnimatePresence>
       </div>
-      <div style="margin-top:1.8rem; font-weight:600; font-size: 1rem;">
-        <div>📞 01812-064622, 01684-154766</div>
-        <div>✉️ <a href="mailto:successgroupltd2022@gmail.com" aria-label="Send Email to Success Animal Healthcare">successgroupltd2022@gmail.com</a></div>
+      <div className="absolute inset-0 flex items-center justify-between p-3">
+        <button onClick={prev} className="rounded-full bg-black/35 hover:bg-black/50 p-2 backdrop-blur">
+          ‹
+        </button>
+        <button onClick={next} className="rounded-full bg-black/35 hover:bg-black/50 p-2 backdrop-blur">
+          ›
+        </button>
       </div>
-      <div class="quick-categories" aria-label="Quick product category highlights">
-        <div class="category-card" tabindex="0">
-          <div class="category-icon" aria-hidden="true">🌿</div>
-          <div class="category-label">Feed Supplements</div>
-        </div>
-        <div class="category-card" tabindex="0">
-          <div class="category-icon" aria-hidden="true">💉</div>
-          <div class="category-label">Injections</div>
-        </div>
-        <div class="category-card" tabindex="0">
-          <div class="category-icon" aria-hidden="true">🧴</div>
-          <div class="category-label">Disinfectants</div>
-        </div>
-        <div class="category-card" tabindex="0">
-          <div class="category-icon" aria-hidden="true">🐛</div>
-          <div class="category-label">Dewormers</div>
-        </div>
+      <div className="flex justify-center gap-2 mt-3">
+        {images.map((_, idx) => (
+          <span key={idx} className={`h-1.5 w-3 rounded-full ${idx === i ? 'bg-white' : 'bg-white/40'}`} />
+        ))}
       </div>
     </div>
-  </section>
+  );
+}
 
-  <!-- About Us Section -->
-  <section id="about-us" class="container" role="region" aria-labelledby="aboutus-title" tabindex="-1" style="padding-top:3rem; padding-bottom:3rem;">
-    <h2 id="aboutus-title" class="section-title">About Us</h2>
-    <p>
-      Success Animal Healthcare Limited was founded with a commitment to enhancing livestock health through innovative, high-quality products. Based in Barkamta Dey Bari, Chandina-3510, Debidwar, Cumilla, Bangladesh, we proudly serve local and global markets with dedication to excellence.
-    </p>
-    <p>
-      Livestock farming plays a vital role in Bangladesh’s agricultural economy, contributing significantly to livelihoods and food security. We are devoted to supporting this essential sector by delivering reliable, effective animal healthcare solutions.
-    </p>
-    <p>
-      Our focus on quality assurance, cutting-edge research and development, and a strong international presence underpin our promise to empowering growth and health in the livestock industry worldwide.
-    </p>
-    <ul class="milestones" aria-label="Key milestones">
-      <li><strong>2022:</strong> Company establishment and launch.</li>
-      <li><strong>2023:</strong> Expansion into export markets.</li>
-      <li><strong>Present:</strong> Trusted supplier to farmers and distributors worldwide.</li>
-    </ul>
-  </section>
+function Timeline() {
+  const items = [
+    {
+      title: "The Day We Met",
+      desc: "A casual hello that changed everything.",
+      when: "Our Chapter 1",
+    },
+    {
+      title: "First Photo",
+      desc: "Awkward pose, perfect memory.",
+      when: "Soon after",
+    },
+    {
+      title: "Inside Jokes",
+      desc: "Laughs that only we understand.",
+      when: "Everywhere",
+    },
+    {
+      title: "Today",
+      desc: "Celebrating your existence 💫",
+      when: "Right now",
+    },
+  ];
 
-  <!-- Our Products Section -->
-  <section id="products" class="container" role="region" aria-labelledby="products-title" tabindex="-1" style="padding-bottom:3rem;">
-    <h2 id="products-title" class="section-title">Our Products</h2>
-    <div class="categories" aria-live="polite">
-
-      <!-- Repeat this block for each category -->
-      <article class="product-category" tabindex="0" aria-label="Feed Supplements Category">
-        <h3>Feed Supplements</h3>
-        <div class="product-item">
-          <h4><!-- Product Name --></h4>
-          <p>High-quality supplements to improve animal nutrition and productivity.</p>
-          <p class="key-benefits">Supports growth, improves feed efficiency.</p>
-          <p class="package-info">Packaging info: 25kg bags</p>
-        </div>
-        <div class="product-item">
-          <h4></h4>
-          <p>Enhances digestive health and overall wellbeing.</p>
-          <p class="key-benefits">Boosts immunity, promotes nutrient absorption.</p>
-          <p class="package-info">Packaging info: 10kg boxes</p>
-        </div>
-      </article>
-
-      <article class="product-category" tabindex="0" aria-label="Antibiotics Category">
-        <h3>Antibiotics</h3>
-        <div class="product-item">
-          <h4></h4>
-          <p>Effective antibiotic solutions for livestock infections.</p>
-          <p class="key-benefits">Fast action, broad spectrum.</p>
-          <p class="package-info">Packaging info: 100ml bottles</p>
-        </div>
-      </article>
-
-      <article class="product-category" tabindex="0" aria-label="Probiotics Category">
-        <h3>Probiotics</h3>
-        <div class="product-item">
-          <h4></h4>
-          <p>Natural probiotics supporting gut health.</p>
-          <p class="key-benefits">Improves digestion and immune system.</p>
-          <p class="package-info">Packaging info: 500g sachets</p>
-        </div>
-      </article>
-
-      <article class="product-category" tabindex="0" aria-label="Disinfectants Category">
-        <h3>Disinfectants</h3>
-        <div class="product-item">
-          <h4></h4>
-          <p>Powerful disinfectants for farm and facility hygiene.</p>
-          <p class="key-benefits">Kills harmful pathogens effectively.</p>
-          <p class="package-info">Packaging info: 5L containers</p>
-        </div>
-      </article>
-
-      <article class="product-category" tabindex="0" aria-label="Nutraceuticals Category">
-        <h3>Nutraceuticals</h3>
-        <div class="product-item">
-          <h4></h4>
-          <p>Health supplements with natural ingredients to boost livestock vitality.</p>
-          <p class="key-benefits">Promotes longevity and better health.</p>
-          <p class="package-info">Packaging info: 1kg jars</p>
-        </div>
-      </article>
-
-      <article class="product-category" tabindex="0" aria-label="Dewormers Category">
-        <h3>Dewormers</h3>
-        <div class="product-item">
-          <h4></h4>
-          <p>Effective deworming products ensuring parasite control.</p>
-          <p class="key-benefits">Safe and fast-acting.</p>
-          <p class="package-info">Packaging info: 250ml bottles</p>
-        </div>
-      </article>
-
-      <article class="product-category" tabindex="0" aria-label="Antibiotic Feed Additives Category">
-        <h3>Antibiotic Feed Additives</h3>
-        <div class="product-item">
-          <h4></h4>
-          <p>Additives for improved animal growth and health via feed.</p>
-          <p class="key-benefits">Boosts weight gain and feed conversion.</p>
-          <p class="package-info">Packaging info: 20kg bags</p>
-        </div>
-      </article>
-
-      <article class="product-category" tabindex="0" aria-label="Injections Category">
-        <h3>Injections</h3>
-        <div class="product-item">
-          <h4></h4>
-          <p>Safe injectable medicines for rapid treatment.</p>
-          <p class="key-benefits">Quick absorption and effectiveness.</p>
-          <p class="package-info">Packaging info: 10ml vials</p>
-        </div>
-      </article>
-
-      <article class="product-category" tabindex="0" aria-label="Feed Premixes & Concentrates Category">
-        <h3>Feed Premixes & Concentrates</h3>
-        <div class="product-item">
-          <h4></h4>
-          <p>Customized premixes enhancing feed quality.</p>
-          <p class="key-benefits">Balanced nutrition for optimum health.</p>
-          <p class="package-info">Packaging info: 25kg bags</p>
-        </div>
-      </article>
-
-      <article class="product-category" tabindex="0" aria-label="Essential Oils & Herbal-Based Formulations Category">
-        <h3>Essential Oils & Herbal-Based Formulations</h3>
-        <div class="product-item">
-          <h4></h4>
-          <p>Natural herbal-based solutions to promote wellbeing.</p>
-          <p class="key-benefits">Non-toxic, nature supportive.</p>
-          <p class="package-info">Packaging info: 100ml bottles</p>
-        </div>
-      </article>
+  return (
+    <div className="relative pl-4 md:pl-8">
+      <div className="absolute left-2 md:left-4 top-0 bottom-0 w-px bg-white/20" />
+      <div className="space-y-6">
+        {items.map((it, idx) => (
+          <motion.div key={idx} initial={{ x: -10, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} viewport={{ once: true }} transition={{ delay: idx * 0.05 }} className="relative">
+            <div className="absolute -left-[7px] md:-left-[9px] top-2 w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-white" />
+            <div className="rounded-xl p-4 bg-white/10 ring-1 ring-white/10">
+              <div className="text-sm text-white/80">{it.when}</div>
+              <div className="text-lg font-bold">{it.title}</div>
+              <div className="text-white/90">{it.desc}</div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </div>
-  </section>
-
-  <!-- Why Choose Us -->
-  <section id="why-us" class="container" role="region" aria-labelledby="whyus-title" tabindex="-1" style="padding-bottom:3rem;">
-    <h2 id="whyus-title" class="section-title">Why Choose Us</h2>
-    <ul>
-      <li><strong>Quality Control Standards:</strong> Our manufacturing facilities adhere to Good Manufacturing Practice (GMP) standards, ensuring consistent quality and safety in every product batch.</li>
-      <li><strong>Research & Innovation:</strong> Our dedicated R&amp;D team continuously works on developing new formulations and improving existing products to meet evolving livestock health challenges.</li>
-      <li><strong>Trusted Partner:</strong> With years of experience in the animal healthcare industry, we've built lasting relationships with distributors, veterinarians, and farmers across multiple countries.</li>
-      <li><strong>Comprehensive Solutions:</strong> Our diverse product range covers all aspects of animal healthcare, from preventive care to treatment, nutrition, and biosecurity.</li>
-      <li><strong>Technical Support:</strong> Our team of veterinary experts provides technical assistance and training to ensure optimal product usage and results.</li>
-      <li><strong>Competitive Pricing:</strong> We offer high-quality products at competitive prices, ensuring value for money and accessibility for farmers of all scales.</li>
-    </ul>
-    <h3>What Our Clients Say</h3>
-    <blockquote style="max-width:700px; font-style: italic; color:#4e342e; border-left: 4px solid #a67c52; padding-left: 1rem; margin-bottom: 1.5rem;">
-      &quot;Success Animal Healthcare products have significantly improved the health and productivity of our dairy herd. Their technical support team is always available to address our concerns and provide guidance.&quot;<br /><strong>Abdul Rahman<br />Dairy Farm Owner, Dhaka</strong>
-    </blockquote>
-    <blockquote style="max-width:700px; font-style: italic; color:#4e342e; border-left: 4px solid #a67c52; padding-left: 1rem;">
-      &quot;As a poultry farmer, I've tried many products, but Success Animal Healthcare's probiotics and feed supplements have given me the best results. My birds are healthier and the mortality rate has decreased significantly.&quot;<br /><strong>Mohammad Hossain<br />Poultry Farmer, Cumilla</strong>
-    </blockquote>
-  </section>
-
-  <!-- Export & Global Reach -->
-  <section id="export" class="container" role="region" aria-labelledby="export-title" tabindex="-1" style="padding-bottom:3rem;">
-    <h2 id="export-title" class="section-title">Export & Global Reach</h2>
-    <ul>
-      <li><strong>Countries Served:</strong> We proudly export to multiple countries across Asia, Africa, and beyond.</li>
-      <li><strong>Export Capacity & Experience:</strong> Years of expertise handling international shipments with efficiency.</li>
-      <li><strong>Logistics & Documentation Support:</strong> Comprehensive assistance to ensure smooth delivery and compliance.</li>
-    </ul>
-  </section>
-
-  <!-- Insights / Blog (Optional) -->
-  <section id="blog" class="container" role="region" aria-labelledby="blog-title" tabindex="-1" style="padding-bottom:3rem;">
-    <h2 id="blog-title" class="section-title">Insights & Blog</h2>
-    <article tabindex="0">
-      <h3>Tips on Livestock Health Management</h3>
-      <p>Discover best practices to maintain the vitality and wellbeing of your livestock.</p>
-    </article>
-    <article tabindex="0">
-      <h3>How to Use Our Products Effectively</h3>
-      <p>Guidance on optimal product use for maximum livestock benefits.</p>
-    </article>
-    <article tabindex="0">
-      <h3>Success Stories from Our Clients</h3>
-      <p>Real-life experiences showcasing the benefits of our animal healthcare products.</p>
-    </article>
-  </section>
-
-  <!-- Contact Us -->
-  <section id="contact" class="container" role="region" aria-labelledby="contact-title" tabindex="-1" style="padding-bottom:4rem;">
-    <h2 id="contact-title" class="section-title">Contact Us</h2>
-    <div class="contact-info" tabindex="0">
-      <h3>Our Location</h3>
-      <p>Barkamta Dey Bari, Chandina-3510, Debidwar, Cumilla, Bangladesh</p>
-      <h3>Phone</h3>
-      <p><a href="tel:+8801812064622" aria-label="Call Success Animal Healthcare">01812-064622</a>,<a href="tel:+8801684154766" aria-label="Call Success Animal Healthcare">01684-154766</a></p>
-      <h3>Email</h3>
-      <p><a href="mailto:successgroupltd2022@gmail.com" aria-label="Email Success Animal Healthcare">successgroupltd2022@gmail.com</a></p>
-    </div>
-    <div id="map" aria-label="Google Map showing company location">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d22297.06533835577!2d90.9974594849483!3d23.49630800373219!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3754646ccb85e101%3A0x3436431fae3ecf28!2sBarkamta!5e1!3m2!1sen!2sbd!4v1747776237351!5m2!1sen!2sbd"
-        width="100%" height="320" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-        title="Google Map showing Barkamta location"
-      ></iframe>
-    </div>
-  </section>
-
-</main>
-
-<!-- Footer -->
-<footer role="contentinfo">
-  &copy; 2025 Success Animal Healthcare Limited. All rights reserved.
-</footer>
-
-<!-- WhatsApp Floating Button -->
-<a href="https://wa.me/8801684154766" target="_blank" rel="noopener" id="whatsapp-button" aria-label="Chat on WhatsApp" title="Chat with us on WhatsApp">
-  <svg aria-hidden="true" viewBox="0 0 24 24">
-    <path d="M20.52 3.48A11.88 11.88 0 0012 0C5.372 0 0 5.372 0 12a11.88 11.88 0 002.456 7.521L0 24l4.607-2.413A11.88 11.88 0 0012 24c6.628 0 12-5.372 12-12 0-3.194-1.243-6.201-3.48-8.52zm-8.52 17.958a9.634 9.634 0 01-4.962-1.448l-.355-.21-2.9 1.517 1.545-3.002-.23-.39a9.68 9.68 0 01-1.45-5.276c0-5.385 4.376-9.758 9.775-9.758 2.609 0 5.062 1.016 6.913 2.854a9.792 9.792 0 012.854 6.917c.002 5.4-4.372 9.79-9.758 9.79zm5.312-7.144c-.29-.147-1.713-.84-1.978-.935-.263-.098-.454-.147-.645.148-.19.293-.733.935-.9 1.127-.165.19-.327.214-.607.073-.28-.144-1.18-.434-2.25-1.392-.832-.743-1.393-1.66-1.555-1.95-.16-.292-.017-.449.128-.593.131-.13.292-.341.438-.512.15-.173.2-.292.3-.486.1-.19.05-.354-.025-.498-.075-.144-.645-1.553-.883-2.13-.232-.555-.468-.48-.645-.49l-.555-.01c-.19 0-.5.07-.763.35s-1.003.983-1.003 2.398 1.027 2.784 1.17 2.976c.14.193 2.02 3.082 4.898 4.32.684.295 1.217.47 1.634.602.686.22 1.31.19 1.805.115.551-.084 1.713-.7 1.955-1.38.244-.685.244-1.27.17-1.38-.07-.105-.26-.168-.555-.292z" />
-  </svg>
-</a>
-
-<script>
-  // Smooth scroll for internal anchor links + update active nav link
-  document.querySelectorAll('nav ul li a').forEach(link => {
-    link.addEventListener('click', function(e){
-      e.preventDefault();
-      const targetID = this.getAttribute('href').substring(1);
-      const targetSection = document.getElementById(targetID);
-      if(targetSection){
-        targetSection.scrollIntoView({behavior: 'smooth', block: 'start'});
-        document.querySelectorAll('nav ul li a').forEach(el => el.classList.remove
+  );
+}
